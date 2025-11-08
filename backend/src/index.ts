@@ -1,31 +1,69 @@
-import express, { Request, Response } from 'express';
+// backend/src/index.ts
+import express, { Application, Request, Response } from 'express';
 import cors from 'cors';
+import dotenv from 'dotenv';
+import { connectDB } from './config/database';
+import faqRoutes from './features/faq/routes/faq.routes';
+import healthRoutes from './modules/health/health.routes';
 
-// 1. Inicializar la aplicación de Express
-const app = express();
-const PORT = 3001; // Usamos 3001 para no chocar con el frontend (que suele usar 3000)
+// Cargar variables de entorno PRIMERO
+dotenv.config();
 
-// 2. Usar Middlewares
-app.use(cors()); // Habilita CORS para todas las rutas
-app.use(express.json()); // Permite al servidor entender JSON
+// Crear aplicación Express
+const app: Application = express();
+const PORT = process.env.PORT || 5000;
 
-// 3. Definir la ruta (Endpoint) de la API
-app.get('/api/whatsapp-link', (req: Request, res: Response) => {
-  
-  // Aquí es donde podrías consultar una base de datos en el futuro
-  // Por ahora, lo dejamos "quemado" en el backend
-  const numeroWhatsapp = '59165304860';
-  const mensajePredeterminado = 'Hola, necesito ayuda con un problema.';
+// Middlewares globales
+app.use(cors({
+  origin: process.env.CORS_ORIGIN || 'http://localhost:3000',
+  credentials: true
+}));
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
-  const link = `https://wa.me/${numeroWhatsapp}?text=${encodeURIComponent(mensajePredeterminado)}`;
+// Conectar a MongoDB
+connectDB();
 
-  // Respondemos al frontend con un objeto JSON
+// ============= RUTAS =============
+app.use('/api/health', healthRoutes);  // Health check
+app.use('/api/faqs', faqRoutes);       // FAQ routes
+
+// Ruta raíz
+app.get('/', (req, res) => {
   res.json({
-    whatsappUrl: link
+    message: 'Servineo API',
+    version: '1.0.0',
+    endpoints: {
+      health: '/api/health',
+      faqs: '/api/faqs',
+      faqsSearch: '/api/faqs/search?q=keyword'
+    }
   });
 });
 
-// 4. Iniciar el servidor
+// Ruta 404 - Debe ir al FINAL
+app.use((req, res) => {
+  res.status(404).json({
+    success: false,
+    message: `Ruta no encontrada: ${req.originalUrl}`
+  });
+});
+
+// Iniciar servidor
 app.listen(PORT, () => {
-  console.log(`Servidor backend corriendo en http://localhost:${PORT}`);
+  console.log('\n🚀 ================================');
+  console.log(`   Servidor: http://localhost:${PORT}`);
+  console.log(`   Entorno: ${process.env.NODE_ENV || 'development'}`);
+  console.log('🚀 ================================\n');
+});
+
+// Manejo de cierre limpio
+process.on('SIGINT', async () => {
+  console.log('\n\n⚠️  Cerrando servidor...');
+  process.exit(0);
+});
+
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('❌ Unhandled Rejection:', reason);
+  process.exit(1);
 });
