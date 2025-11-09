@@ -1,0 +1,155 @@
+
+/* src/App.css */
+
+/* --- 1. Definición de Variables CSS (Tu paleta de colores) --- */
+:root {
+    /* Colores Primarios */
+    --color-primary: #2B31E0;         /* Primary (Main Blue) */
+    --color-primary-light: #1AA7ED;   /* Primary Light (Ateneo Blue) */
+    
+    /* Colores de Realce / Badges */
+    --color-highlight: #759AE0;       /* Highlight (Azul suave) */
+
+    /* Colores Neutros */
+    --color-fondo-claro: #F9FAFB;     /* Fondo claro (principal) */
+    --color-texto-principal: #111827; /* Texto principal (oscuro) */
+    --color-superficie: #D1D5DB;      /* Superficie / borde */
+    --color-fondo-secundario: #E5E7EB; /* Fondo secundario */
+}
+
+/* --- 2. Estilos generales, Tipografía y Responsive --- */
+body, #root {
+    /* Tipografía Roboto */
+    font-family: 'Roboto', Arial, sans-serif; 
+    background-color: var(--color-fondo-claro); 
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    width: 100%;
+    /* Flexbox para centrar el contenido principal */
+    display: flex; 
+    justify-content: center;
+    align-items: flex-start;
+}
+
+.help-container {
+    width: 100%; 
+    background-color: white;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1); 
+    padding: 0;
+    margin: 20px; 
+    max-width: 800px; /* Ancho máximo para el diseño web */
+}
+
+/* --- 3. Encabezado (Barra Superior) --- */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 20px;
+    background-color: var(--color-primary); /* Primary (Main Blue) */
+    color: white; 
+}
+
+.header h1 {
+    font-size: 1.2rem;
+    font-weight: 700; /* Roboto Bold */
+    margin: 0;
+    flex-grow: 1;
+    text-align: center;
+}
+
+.home-icon, .user-icon {
+    font-size: 1.4rem;
+    color: white; 
+    cursor: pointer;
+}
+
+/* --- 4. Barra de Búsqueda --- */
+.search-section {
+    padding: 20px;
+    background-color: white;
+}
+
+.search-box {
+    display: flex;
+    align-items: center;
+    border: 1px solid var(--color-superficie);
+    border-radius: 20px; 
+    padding: 10px 15px;
+    background-color: var(--color-fondo-secundario); 
+}
+
+.search-icon {
+    color: var(--color-superficie);
+    margin-right: 10px;
+    font-size: 1.1rem;
+    cursor: pointer;
+}
+
+.search-box input {
+    font-weight: 400; /* Roboto Regular */
+    border: none;
+    outline: none;
+    flex-grow: 1;
+    font-size: 1rem;
+    background-color: transparent;
+    color: var(--color-texto-principal);
+}
+
+/* --- 5. Tarjetas de Ayuda --- */
+.main-content {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    padding: 20px;
+}
+
+.help-card {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    padding: 18px 20px;
+    background-color: #fff;
+    border: 1px solid var(--color-superficie);
+    border-radius: 8px;
+    text-align: left;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+}
+
+.help-card:hover {
+    background-color: var(--color-primary-light); /* Primary Light (Ateneo Blue) */
+    border-color: var(--color-primary-light);
+    transform: translateY(-2px); 
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.help-card:hover .card-text h2, 
+.help-card:hover .card-text p,
+.help-card:hover .highlight-star {
+    color: white; 
+}
+
+.card-icon {
+    margin-right: 15px;
+    font-size: 1.8rem;
+}
+
+.highlight-star {
+    color: var(--color-highlight); /* Color de Realce/Badges */
+}
+
+.card-text h2 {
+    font-weight: 700; /* Roboto Bold */
+    margin: 0;
+    font-size: 1.1rem;
+    color: var(--color-texto-principal);
+}
+
+.card-text p {
+    margin-top: 5px;
+    font-size: 0.85rem;
+    font-weight: 500; /* Roboto Medium */
+    color: #64748B; 
+}

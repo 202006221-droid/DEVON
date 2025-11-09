@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Centro de Ayuda - Servineo</title>
+    
+    <!-- Carga de React, ReactDOM, Babel -->
+    <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    
+    <!-- Carga de Axios (Nuevo) -->
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script> 
+    
+    <!-- Carga de Font Awesome para los iconos -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <!-- Carga de la fuente Roboto -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    
+    <!-- CSS del Archivo App.css adaptado -->
+    <style>
+        /* --- 1. Definición de Variables CSS (Tu paleta) --- */
+        :root {
+            /* Colores Primarios */
+            --color-primary: #2B31E0;  /* Primary (Main Blue) */
+            --color-primary-light: #1AA7ED;  /* Primary Light (Ateneo Blue) */
+            
+            /* Colores de Realce / Badges */
+            --color-highlight: #759AE0;  /* Highlight (Azul suave) */
+
+            /* Colores Neutros */
+            --color-fondo-claro: #F9FAFB;  /* Fondo claro (principal) */
+            --color-texto-principal: #111827; /* Texto principal (oscuro) */
+            --color-superficie: #D1D5DB; /* Superficie / borde */
+            --color-fondo-secundario: #E5E7EB; /* Fondo secundario */
+        }
+        /* --- 2. Estilos generales, Tipografía y Responsive --- */
+        body, #root {
+            font-family: 'Roboto', Arial, sans-serif; 
+            background-color: var(--color-fondo-claro); 
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            width: 100%;
+            display: flex; 
+            justify-content: center;
+            align-items: flex-start;
+        }
+        .help-container {
+            width: 100%; 
+            background-color: white;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1); 
+            padding: 0;
+            margin: 20px; 
+            max-width: 800px; 
+        }
+        /* --- 3. Encabezado (Barra Superior) --- */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+            background-color: var(--color-primary); 
+            color: white; 
+        }
+        .header h1 {
+            font-size: 1.2rem;
+            font-weight: 700; 
+            margin: 0;
+            flex-grow: 1;
+            text-align: center;
+        }
+        .home-icon, .user-icon {
+            font-size: 1.4rem;
+            color: white; 
+            cursor: pointer;
+        }
+        /* --- 4. Barra de Búsqueda --- */
+        .search-section {
+            padding: 20px;
+            background-color: white;
+        }
+        .search-box {
+            display: flex;
+            align-items: center;
+            border: 1px solid var(--color-superficie);
+            border-radius: 20px; 
+            padding: 10px 15px;
+            background-color: var(--color-fondo-secundario); 
+        }
+        .search-icon {
+            color: var(--color-superficie);
+            margin-right: 10px;
+            font-size: 1.1rem;
+            cursor: pointer;
+        }
+        .search-box input {
+            font-weight: 400; 
+            border: none;
+            outline: none;
+            flex-grow: 1;
+            font-size: 1rem;
+            background-color: transparent;
+            color: var(--color-texto-principal);
+        }
+        /* --- 5. Tarjetas de Ayuda --- */
+        .main-content {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            padding: 20px;
+        }
+        .help-card {
+            display: flex;
+            align-items: center;
+            width: 100%;
+            padding: 18px 20px;
+            background-color: #fff;
+            border: 1px solid var(--color-superficie);
+            border-radius: 8px;
+            text-align: left;
+            cursor: pointer;
+            transition: all 0.2s ease-in-out;
+        }
+        .help-card:hover {
+            background-color: var(--color-primary-light); 
+            border-color: var(--color-primary-light);
+            transform: translateY(-2px); 
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .help-card:hover .card-text h2, .help-card:hover .card-text p,.help-card:hover .highlight-star {
+            color: white; 
+        }
+        .card-icon {
+            margin-right: 15px;
+            font-size: 1.8rem;
+        }
+        .highlight-star {
+            color: var(--color-highlight); 
+        }
+        .card-text h2 {
+            font-weight: 700; 
+            margin: 0;
+            font-size: 1.1rem;
+            color: var(--color-texto-principal);
+        }
+        .card-text p {
+            margin-top: 5px;
+            font-size: 0.85rem;
+            font-weight: 500; 
+            color: #64748B; 
+        }
+        /* --- 6. Resultados y Feedback --- */
+        .feedback-box {
+            padding: 15px 20px;
+            margin-top: 15px;
+            border-radius: 8px;
+            background-color: var(--color-fondo-secundario);
+            font-size: 0.95rem;
+        }
+        .feedback-box.loading {
+            border: 1px solid var(--color-primary);
+            color: var(--color-primary);
+            text-align: center;
+        }
+        .feedback-box.error {
+            border: 1px solid #E53E3E; /* Red */
+            color: #E53E3E;
+        }
+        .feedback-box.success {
+            border: 1px solid #38A169; /* Green */
+            color: var(--color-texto-principal);
+            background-color: #F0FFF4;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState } = React;
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+
+        // --- CONFIGURACIÓN CRÍTICA DE RED ---
+        // Usamos __port_3001, que es la variable inyectada por el entorno para acceder al backend en el puerto 3001.
+        // Si no está definida, usamos localhost:3001 como fallback para desarrollo local.
+        const API_BASE_URL = typeof __port_3001 !== 'undefined' 
+            ? `http://127.0.0.1:${__port_3001}` 
+            : 'http://localhost:3001';
+        
+        console.log("Backend API Base URL:", API_BASE_URL);
+
+        // Componente principal del Centro de Ayuda
+        const CentroDeAyuda = () => {
+            // Estado para manejar el texto de la barra de búsqueda
+            const [searchTerm, setSearchTerm] = useState('');
+            // Nuevos estados para manejar el feedback de la API
+            const [isLoading, setIsLoading] = useState(false);
+            const [searchResult, setSearchResult] = useState(null);
+            const [error, setError] = useState(null);
+
+            // Función de redirección (sin alerts)
+            const handleRedirect = (section) => {
+                console.log(`Navegando a: /${section.toLowerCase().replace(/\s/g, '-')}`);
+                setError(null);
+                setSearchResult({
+                    message: `Simulando navegación a "${section}". En una app real, aquí cargarías la nueva vista.`
+                });
+            };
+
+            // --- Funcionalidad de Búsqueda (Implementación de Axios) ---
+            const handleSearch = async (event) => {
+                // Previene que la página se recargue (comportamiento de formulario)
+                if (event && 'preventDefault' in event) event.preventDefault(); 
+
+                const query = searchTerm.trim();
+                if (query.length === 0) {
+                    setError('Por favor, ingresa un término de búsqueda.');
+                    setSearchResult(null);
+                    return;
+                }
+
+                setIsLoading(true);
+                setError(null);
+                setSearchResult(null);
+                
+                // Endpoint completo: /api/search?q=query
+                const url = `${API_BASE_URL}/api/search`;
+
+                try {
+                    const response = await axios.get(url, {
+                        params: { q: query }
+                    });
+                    
+                    // Si el backend responde, muestra el resultado.
+                    setSearchResult({ 
+                        message: `Búsqueda exitosa para: "${query}"`,
+                        data: response.data 
+                    });
+                    console.log("Respuesta del Backend:", response.data);
+
+                } catch (err) {
+                    console.error("ERROR CRÍTICO DE CONEXIÓN:", err);
+                    
+                    // Este es el manejo de tu error original: "Network Error"
+                    if (err.code === 'ERR_NETWORK' || err.message === 'Network Error') {
+                        setError('ERROR: No se pudo conectar al servidor de backend. Verifica que esté corriendo en el puerto 3001 y que la configuración de la URL sea correcta.');
+                    } else {
+                        // Manejo de otros errores (ej. 404, 500)
+                        const errorMessage = err.response 
+                            ? `Error de API (${err.response.status}): ${err.response.data?.message || 'Error desconocido'}` 
+                            : 'Error al procesar la solicitud.';
+                        setError(errorMessage);
+                    }
+                } finally {
+                    setIsLoading(false);
+                }
+            };
+
+            const renderFeedback = () => {
+                if (isLoading) {
+                    return <div className="feedback-box loading">Cargando resultados de búsqueda...</div>;
+                }
+                if (error) {
+                    return <div className="feedback-box error">{error}</div>;
+                }
+                if (searchResult) {
+                    return (
+                        <div className="feedback-box success">
+                            <p><strong>{searchResult.message}</strong></p>
+                            {/* Mostrar datos de ejemplo del backend, si los hay */}
+                            {searchResult.data && searchResult.data.message && (
+                                <p>Backend dice: <em>{searchResult.data.message}</em></p>
+                            )}
+                        </div>
+                    );
+                }
+                return null;
+            }
+
+            return (
+                <div className="help-container">
+                    {/* 1. Encabezado / Barra de Navegación Superior */}
+                    <header className="header">
+                        <i className="fas fa-home home-icon" onClick={() => handleRedirect('HOME')}></i>
+                        <h1>Centro de Ayuda</h1>
+                        <i className="fas fa-user-circle user-icon" onClick={() => handleRedirect('Perfil')}></i>
+                    </header>
+
+                    {/* 2. Barra de Búsqueda */}
+                    <section className="search-section">
+                        <form onSubmit={handleSearch}>
+                            <div className="search-box">
+                                <i className="fas fa-search search-icon" onClick={handleSearch}></i>
+                                <input 
+                                    type="text" 
+                                    placeholder="Buscar..." 
+                                    aria-label="Buscador de ayuda"
+                                    value={searchTerm}
+                                    onChange={(e) => setSearchTerm(e.target.value)}
+                                />
+                            </div>
+                        </form>
+                        {/* Mostrar el feedback de la API aquí */}
+                        {renderFeedback()}
+                    </section>
+                    
+                    {/* 3. Contenido Principal: Opciones de Ayuda */}
+                    <main className="main-content">
+                        {/* Botón 1: Publicaciones Populares */}
+                        <button 
+                            className="help-card" 
+                            onClick={() => handleRedirect('Publicaciones Populares')}
+                        >
+                            <div className="card-icon">
+                                <i className="fas fa-star highlight-star"></i>
+                            </div>
+                            <div className="card-text">
+                                <h2>Publicaciones Populares</h2>
+                                <p>Publicaciones populares</p>
+                            </div>
+                        </button>
+
+                        {/* Botón 2: Preguntas Frecuentes */}
+                        <button 
+                            className="help-card" 
+                            onClick={() => handleRedirect('Preguntas Frecuentes sobre Servineo')}
+                        >
+                            <div className="card-icon">
+                                <i className="fas fa-star highlight-star"></i>
+                            </div>
+                            <div className="card-text">
+                                <h2>Preguntas frecuentes</h2>
+                                <p>Preguntas frecuentes sobre Servineo</p>
+                            </div>
+                        </button>
+                    </main>
+                </div>
+            );
+        };
+
+        // Renderizar la aplicación en el DOM
+        root.render(<CentroDeAyuda />);
+
+    </script>
+</body>
+</html>
